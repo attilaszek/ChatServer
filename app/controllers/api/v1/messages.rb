@@ -25,6 +25,8 @@ module API
         desc "Create new message"
         params do
           requires :text, type: String
+          optional :file_name, type: String
+          optional :file_b64, type: String
           requires :sender_id, type: Integer
           requires :receiver_id, type: Integer
         end
