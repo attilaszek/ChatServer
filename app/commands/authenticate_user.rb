@@ -16,10 +16,14 @@ class AuthenticateUser
 
   def user
     user = User.find_by_email(email)
-    return user if user && user.authenticate(password)
+    return user if user && !user.online && user.authenticate(password)
 
     if user
-      errors.add :password, 'Invalid password'
+      if user.online
+        errors.add :account, 'Already signed in on another device'
+      else
+        errors.add :password, 'Invalid password'
+      end
     else
       errors.add :email, 'Not registered'
     end

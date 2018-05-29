@@ -37,6 +37,7 @@ module API
           end
 
           @user.save
+
           { auth_token: AuthenticateUser.call(@user.email, @user.password).result }
         end
 
@@ -50,10 +51,6 @@ module API
 
           if command.success?
             user = User.find_by_email(params[:email])
-            user.update(online: true)
-            user.save
-            p user
-            p user.errors
 
             {auth_token: command.result}
           else
@@ -64,6 +61,15 @@ module API
         desc "Get current user", headers: Base.headers_definition
         get "getuser" do
           authenticate_request
+
+          current_user.update(online: true)
+          current_user.save
+
+          serialized_data = ActiveModelSerializers::Adapter::Json.new(
+              UserSerializer.new(current_user)
+            ).serializable_hash
+            ActionCable.server.broadcast "user_list_channel", serialized_data.merge({delete: false})
+
           {
             email: current_user.email,
             first_name: current_user.first_name,
@@ -74,7 +80,9 @@ module API
         desc "Get user list", headers: Base.headers_definition
         get "user_list" do
           authenticate_request
-          User.where(online: true)
+          online_users = User.where("online = ? AND email != ?", true, current_user.email)
+
+          online_users
         end
 
       end
