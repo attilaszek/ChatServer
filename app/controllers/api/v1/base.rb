@@ -23,6 +23,7 @@ module API
       end
 
       mount API::V1::Users
+      mount API::V1::Messages
 
       add_swagger_documentation(
         api_version: "v1",
