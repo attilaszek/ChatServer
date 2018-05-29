@@ -29,7 +29,14 @@ module API
           requires :receiver_id, type: Integer
         end
         post "create" do
-          Message.create(params)
+          message = Message.create(params)
+
+          serialized_data = ActiveModelSerializers::Adapter::Json.new(
+              MessageSerializer.new(message)
+            ).serializable_hash
+          ActionCable.server.broadcast "conversation_channel_#" + message.receiver_id.to_s, serialized_data.merge({sender_id: params[:sender_id]})
+
+          message
         end
 
       end

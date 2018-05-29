@@ -68,7 +68,7 @@ module API
           serialized_data = ActiveModelSerializers::Adapter::Json.new(
               UserSerializer.new(current_user)
             ).serializable_hash
-            ActionCable.server.broadcast "user_list_channel", serialized_data.merge({delete: false})
+          ActionCable.server.broadcast "user_list_channel", serialized_data.merge({delete: false})
 
           {
             email: current_user.email,
