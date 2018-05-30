@@ -37,6 +37,7 @@ module API
               MessageSerializer.new(message)
             ).serializable_hash
           ActionCable.server.broadcast "conversation_channel_#" + message.receiver_id.to_s, serialized_data.merge({sender_id: params[:sender_id]})
+          ActionCable.server.broadcast "conversation_channel_#" + message.sender_id.to_s, serialized_data.merge({sender_id: params[:sender_id]})
 
           message
         end
