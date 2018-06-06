@@ -17,28 +17,12 @@ module API
           optional :introduction, type: String
         end
         post "signup" do
-          @user = User.new({
-            first_name: params[:first_name],
-            last_name: params[:last_name],
-            email: params[:email],
-            password: params[:password],
-            birth_date: params[:birth_date],
-            sex: params[:sex],
-            introduction: params[:introduction],
-            online: false
-          })
+          result = User::Create.(params)
 
-          unless @user.valid?
-            error!(@user.errors.messages, 404)
-          end
+          error_messages = result["contract.default"].errors.messages
+          error!(error_messages, 404) if error_messages.length > 0
 
-          unless params[:password] == params[:password_confirmation]
-            error!({"password_confirmation": ["invalid password confirmation"]}, 404)
-          end
-
-          @user.save
-
-          { auth_token: AuthenticateUser.call(@user.email, @user.password).result }
+          { auth_token: result["auth_token"] }
         end
 
         desc "Log in"

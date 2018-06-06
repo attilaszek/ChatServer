@@ -37,9 +37,18 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'jwt'
 gem 'simple_command'
 
+# Trailblazer
+gem 'trailblazer'
+gem "trailblazer-rails"
+gem "trailblazer-cells"
+gem "cells-rails"
+gem "reform"
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'rspec-rails'
+  gem 'database_cleaner'
 end
 
 group :development do
